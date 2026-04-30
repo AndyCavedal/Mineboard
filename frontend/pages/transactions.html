@@ -1,1 +1,21 @@
-<!-- TODO: transactions page content -->
+<section class="page-header">
+  <h1>Transactions</h1>
+  <p class="subtitle">All your income and expenses</p>
+</section>
+
+<div id="tx-month-selector"></div>
+
+<div class="filters-bar" id="filters">
+  <select id="filter-type">
+    <option value="all">All types</option>
+    <option value="income">Income</option>
+    <option value="expense">Expense</option>
+  </select>
+  <select id="filter-category">
+    <option value="all">All categories</option>
+  </select>
+  <div style="flex:1;"></div>
+  <button class="btn btn-primary" id="add-transaction-btn">+ New Transaction</button>
+</div>
+
+<div id="transactions-content"></div>
