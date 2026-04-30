@@ -1,0 +1,40 @@
+/* =====================
+   CSS Variables
+   ===================== */
+:root {
+  --color-bg: #0f1117;
+  --color-surface: #1a1d27;
+  --color-border: #2a2d3a;
+
+  --color-income: #22c55e;
+  --color-expense: #f97316;
+  --color-accent: #6366f1;
+
+  --color-text: #e2e8f0;
+  --color-text-muted: #64748b;
+
+  --font-base: 'Inter', sans-serif;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* =====================
+   Reset
+   ===================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-base);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* =====================
+   TODO: layout, nav, components
+   ===================== */
