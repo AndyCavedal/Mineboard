@@ -1,5 +1,4 @@
-// TODO: set base URL from env or config
-const API_BASE = 'http://localhost:3000';
+const API_BASE = window.APP_CONFIG.API_BASE_URL;
 
 const api = {
   get: (path) => fetch(`${API_BASE}${path}`).then((r) => r.json()),

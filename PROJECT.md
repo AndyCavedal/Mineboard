@@ -38,6 +38,40 @@ Aplicación web de uso personal para el seguimiento de finanzas personales. Perm
 
 ---
 
+## Autenticación y roles
+
+### Método de autenticación
+- **Google Auth via Firebase Authentication** — sin formulario de registro ni manejo de contraseñas
+- Acceso mediante botón "Iniciar sesión con Google"
+- El frontend obtiene un ID token de Firebase Auth y lo envía al backend en cada request (`Authorization: Bearer <token>`)
+- El backend verifica el token con el Firebase Admin SDK antes de procesar cualquier endpoint
+
+### Whitelist de acceso
+- Solo los usuarios cuyo email esté en la whitelist pueden ingresar a la aplicación
+- Cualquier cuenta de Google que no esté en la lista es rechazada
+- La whitelist se define en una colección `allowedUsers` en Firestore (alternativa: variable de entorno en el backend para la lista inicial)
+- Si el email autenticado no está en `allowedUsers`, el backend responde `403 Forbidden` y el frontend muestra pantalla de acceso denegado
+
+### Roles
+Dos roles dentro de la aplicación:
+
+- **`owner`** — un único usuario (yo)
+  - Acceso completo a todas las secciones
+  - CRUD completo en el módulo de finanzas personales (transacciones, categorías, dashboard)
+  - Acceso completo al módulo de gastos compartidos
+
+- **`friend`** — los demás usuarios de la whitelist
+  - Acceso de **solo lectura** al módulo de finanzas personales (pueden ver pero no crear, editar ni eliminar)
+  - Acceso completo al módulo de gastos compartidos (pueden agregar transacciones, deudas, divisiones de gastos)
+
+### Implementación
+- El rol se define en Firestore junto al usuario en la colección `allowedUsers`
+- El backend, al verificar el token, busca el documento del usuario por email y adjunta el rol al request (`req.user = { email, role }`)
+- Cada controlador de finanzas personales valida `role === 'owner'` antes de permitir mutaciones (POST/PUT/DELETE); las lecturas (GET) están permitidas para ambos roles
+- Los endpoints de gastos compartidos están abiertos a ambos roles
+
+---
+
 ## Estructura de la aplicación
 
 ### Fase 1 — Finance Tracker personal (prioridad actual)
@@ -126,6 +160,13 @@ debts/
     concept: string
     paid: boolean
     date: timestamp
+
+allowedUsers/
+  {id}
+    email: string         (clave de búsqueda, único)
+    role: "owner" | "friend"
+    name: string          (opcional, display)
+    addedAt: timestamp
 ```
 
 ---
@@ -172,7 +213,8 @@ finance/
 - Responsive, funciona bien en celular y escritorio
 - Paleta moderna, acentos de color para ingresos (verde) y gastos (rojo/naranja)
 - Navegación por secciones: Dashboard / Transacciones / Categorías / Amigos
-- Sin login en la primera fase; se puede agregar autenticación con Firebase Auth en etapa posterior
+- Login con Google (Firebase Auth) restringido por whitelist y diferenciado por rol (`owner` vs `friend`); ver sección "Autenticación y roles"
+- En la UI, los usuarios `friend` ven el módulo de finanzas personales en modo lectura: se ocultan/deshabilitan los botones de crear/editar/eliminar
 
 ---
 
