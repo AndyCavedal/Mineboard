@@ -71,7 +71,7 @@ function renderMonthSelector(year, month, onChange) {
 
   const prevBtn = document.createElement('button');
   prevBtn.className = 'btn-icon';
-  prevBtn.innerHTML = '&#8592;';
+  prevBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   prevBtn.setAttribute('aria-label', 'Previous month');
 
   const label = document.createElement('span');
@@ -80,7 +80,7 @@ function renderMonthSelector(year, month, onChange) {
 
   const nextBtn = document.createElement('button');
   nextBtn.className = 'btn-icon';
-  nextBtn.innerHTML = '&#8594;';
+  nextBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 2L10 7L5 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   nextBtn.setAttribute('aria-label', 'Next month');
 
   prevBtn.addEventListener('click', () => {

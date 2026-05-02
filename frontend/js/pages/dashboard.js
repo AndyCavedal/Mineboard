@@ -153,8 +153,9 @@ function renderExpenseChart(transactions, categories) {
             font: { family: "'Space Mono'", size: isMobile ? 11 : 12 },
             padding: isMobile ? 10 : 14,
             usePointStyle: true,
-            pointStyleWidth: 10,
-            boxWidth: isMobile ? 10 : 14,
+            pointStyle: 'circle',
+            boxWidth: 8,
+            boxHeight: 8,
           },
         },
         tooltip: {

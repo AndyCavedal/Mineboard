@@ -82,25 +82,29 @@ document.getElementById('btn-signin')?.addEventListener('click', async () => {
   }
 });
 
-window.addEventListener('authStateChanged', async ({ detail: { user } }) => {
+window.addEventListener('authStateChanged', ({ detail: { user } }) => {
   if (user) {
     loginScreen.classList.add('hidden');
     appShell.classList.remove('hidden');
 
-    try {
-      const me = await api.get('/me');
-      setUserRole(me.role);
-      window.APP_USER = me;
-      document.getElementById('nav-user-name')?.setAttribute('data-role', me.role);
-    } catch {
-      // role stays null, readonly by default
-    }
+    // Kick off data fetches immediately — by the time the page HTML loads
+    // and initDashboard runs, these may already be cached
+    api.get('/transactions').catch(() => {});
+    api.get('/categories').catch(() => {});
 
+    // Navigate without waiting for /me
     if (!location.hash || location.hash === '#/') {
       location.hash = '#/dashboard';
     } else {
       navigate(getRoute());
     }
+
+    // Load user role in background
+    api.get('/me').then(me => {
+      setUserRole(me.role);
+      window.APP_USER = me;
+      document.getElementById('nav-user-name')?.setAttribute('data-role', me.role);
+    }).catch(() => {});
   } else {
     appShell.classList.add('hidden');
     loginScreen.classList.remove('hidden');
@@ -109,6 +113,11 @@ window.addEventListener('authStateChanged', async ({ detail: { user } }) => {
     pageEl.innerHTML = '';
   }
 });
+
+// Preload the most common page fragment so navigate() finds it in cache
+fetch('pages/dashboard.html').then(r => r.text()).then(html => {
+  fragmentCache.set('/dashboard', html);
+}).catch(() => {});
 
 // Boot
 initBackground();
