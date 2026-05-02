@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Finance Tracker</title>
+  <title>Mineboard</title>
 
   <!-- Fonts: VT323 (display/pixel) + Space Mono (body/terminal) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -17,8 +17,17 @@
   <!-- Background image layer -->
   <div id="bg"></div>
 
-  <!-- App shell -->
-  <div class="app-shell">
+  <!-- Login screen -->
+  <div id="login-screen">
+    <div class="login-card">
+      <div class="login-brand">v0..0</div>
+      <p class="login-subtitle">mineboard</p>
+      <button id="btn-signin" class="btn-google">continuar con google</button>
+    </div>
+  </div>
+
+  <!-- App shell (hidden until authenticated) -->
+  <div class="app-shell hidden">
     <nav class="nav">
       <a href="#/dashboard" class="nav-brand">v0..0</a>
       <div class="nav-links">
@@ -26,7 +35,10 @@
         <a href="#/transactions" class="nav-link" data-route="/transactions">Transactions</a>
         <a href="#/categories" class="nav-link" data-route="/categories">Categories</a>
       </div>
-      <button class="btn-wallpaper" id="shuffle-bg" aria-label="Change wallpaper"></button>
+      <div class="nav-right">
+        <button class="btn-wallpaper" id="shuffle-bg" aria-label="Change wallpaper"></button>
+        <button id="btn-signout" class="btn-signout" title="Cerrar sesión">&#x2715;</button>
+      </div>
     </nav>
 
     <main id="page"></main>
@@ -38,11 +50,16 @@
   <!-- Modal portal -->
   <div id="modal-root"></div>
 
+  <!-- Firebase Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- App scripts (order matters) -->
   <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/api.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/components.js"></script>

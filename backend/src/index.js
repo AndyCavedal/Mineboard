@@ -32,6 +32,11 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+const { requireAuth } = require('./middleware/auth');
+app.get('/me', requireAuth, (req, res) => {
+  res.json(req.user);
+});
+
 app.use('/transactions', transactionsRouter);
 app.use('/categories', categoriesRouter);
 app.use('/friends', friendsRouter);

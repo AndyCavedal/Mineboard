@@ -11,17 +11,17 @@ const ROUTES = {
 const fragmentCache = new Map();
 const pageEl = document.getElementById('page');
 const navLinks = document.querySelectorAll('.nav-link');
+const appShell = document.querySelector('.app-shell');
+const loginScreen = document.getElementById('login-screen');
 
 async function navigate(path) {
   const route = ROUTES[path];
   if (!route) return navigate('/dashboard');
 
-  // Update nav
   navLinks.forEach(link => {
     link.classList.toggle('active', link.dataset.route === path);
   });
 
-  // Fetch HTML fragment (cached)
   let html = fragmentCache.get(path);
   if (!html) {
     try {
@@ -33,13 +33,11 @@ async function navigate(path) {
     }
   }
 
-  // Inject and animate
   pageEl.style.animation = 'none';
-  pageEl.offsetHeight; // reflow
+  pageEl.offsetHeight;
   pageEl.style.animation = '';
   pageEl.innerHTML = html;
 
-  // Init page logic
   route.init();
 }
 
@@ -48,18 +46,59 @@ function getRoute() {
   return hash;
 }
 
-window.addEventListener('hashchange', () => navigate(getRoute()));
+window.addEventListener('hashchange', () => {
+  if (getCurrentUser()) navigate(getRoute());
+});
 
-// Shuffle background button
 document.getElementById('shuffle-bg')?.addEventListener('click', () => {
   shuffleBackground();
 });
 
+document.getElementById('btn-signin')?.addEventListener('click', async () => {
+  const btn = document.getElementById('btn-signin');
+  btn.disabled = true;
+  btn.textContent = 'conectando...';
+  try {
+    await signInWithGoogle();
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = 'continuar con google';
+    showToast('Error al iniciar sesión', 'error');
+  }
+});
+
+document.getElementById('btn-signout')?.addEventListener('click', () => {
+  signOut();
+});
+
+window.addEventListener('authStateChanged', async ({ detail: { user } }) => {
+  if (user) {
+    loginScreen.classList.add('hidden');
+    appShell.classList.remove('hidden');
+
+    try {
+      const me = await api.get('/me');
+      setUserRole(me.role);
+      window.APP_USER = me;
+      document.getElementById('nav-user-name')?.setAttribute('data-role', me.role);
+    } catch {
+      // role stays null, readonly by default
+    }
+
+    if (!location.hash || location.hash === '#/') {
+      location.hash = '#/dashboard';
+    } else {
+      navigate(getRoute());
+    }
+  } else {
+    appShell.classList.add('hidden');
+    loginScreen.classList.remove('hidden');
+    window.APP_USER = null;
+    fragmentCache.clear();
+    pageEl.innerHTML = '';
+  }
+});
+
 // Boot
 initBackground();
-
-if (!location.hash) {
-  location.hash = '#/dashboard';
-} else {
-  navigate(getRoute());
-}
+initAuth();

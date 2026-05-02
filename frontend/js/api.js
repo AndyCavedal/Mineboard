@@ -1,19 +1,38 @@
 const API_BASE = window.APP_CONFIG.API_BASE_URL;
 
+async function authHeaders(includeContentType = true) {
+  const token = await getToken();
+  const headers = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  if (includeContentType) headers['Content-Type'] = 'application/json';
+  return headers;
+}
+
 const api = {
-  get: (path) => fetch(`${API_BASE}${path}`).then((r) => r.json()),
-  post: (path, body) =>
-    fetch(`${API_BASE}${path}`, {
+  get: async (path) => {
+    const res = await fetch(`${API_BASE}${path}`, { headers: await authHeaders(false) });
+    return res.json();
+  },
+  post: async (path, body) => {
+    const res = await fetch(`${API_BASE}${path}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await authHeaders(),
       body: JSON.stringify(body),
-    }).then((r) => r.json()),
-  put: (path, body) =>
-    fetch(`${API_BASE}${path}`, {
+    });
+    return res.json();
+  },
+  put: async (path, body) => {
+    const res = await fetch(`${API_BASE}${path}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await authHeaders(),
       body: JSON.stringify(body),
-    }).then((r) => r.json()),
-  delete: (path) =>
-    fetch(`${API_BASE}${path}`, { method: 'DELETE' }),
+    });
+    return res.json();
+  },
+  delete: async (path) => {
+    return fetch(`${API_BASE}${path}`, {
+      method: 'DELETE',
+      headers: await authHeaders(false),
+    });
+  },
 };
