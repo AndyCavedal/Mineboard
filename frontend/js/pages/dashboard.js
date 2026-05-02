@@ -67,9 +67,17 @@ function _renderDashboard(year, month, transactions, categories) {
   const cardsEl = document.getElementById('summary-cards');
   if (cardsEl) {
     cardsEl.innerHTML =
-      renderSummaryCard('Income', formatCurrency(income), 'var(--color-income)', `${monthly.filter(t => t.type === 'income').length} transactions`) +
-      renderSummaryCard('Expenses', formatCurrency(expenses), 'var(--color-expense)', `${monthly.filter(t => t.type === 'expense').length} transactions`) +
-      renderSummaryCard('Balance', formatCurrency(balance), balance >= 0 ? 'var(--color-income)' : 'var(--color-expense)', `${monthly.length} total`);
+      renderSummaryCard('Income',   formatCurrency(income),   'var(--color-income)',  `${monthly.filter(t => t.type === 'income').length} transactions`,  'income') +
+      renderSummaryCard('Expenses', formatCurrency(expenses), 'var(--color-expense)', `${monthly.filter(t => t.type === 'expense').length} transactions`, 'expense') +
+      renderSummaryCard('Balance',  formatCurrency(balance),  balance >= 0 ? 'var(--color-income)' : 'var(--color-expense)', `${monthly.length} total`);
+
+    // Wire Income/Expense cards → navigate to Transactions with pre-set filter
+    cardsEl.querySelectorAll('[data-tx-filter]').forEach(card => {
+      card.addEventListener('click', () => {
+        window.__txPreFilter = card.dataset.txFilter;
+        location.hash = '#/transactions';
+      });
+    });
   }
 
   // Chart

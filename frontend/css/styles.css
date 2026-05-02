@@ -154,6 +154,8 @@ body {
   transition: color 0.2s, background 0.2s;
   letter-spacing: 0.02em;
   text-transform: uppercase;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
 }
 
 .nav a.nav-link:hover {
@@ -225,12 +227,14 @@ body {
   letter-spacing: 0.02em;
   color: var(--color-text);
   margin-bottom: 0.35rem;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
 }
 
 .page-header .subtitle {
   font-size: 0.92rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   font-weight: 400;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.7);
 }
 
 h2 {
@@ -320,6 +324,32 @@ h3 {
   font-size: 0.78rem;
   color: var(--color-text-muted);
   margin-top: 0.5rem;
+}
+
+.summary-card--link {
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.summary-card--link:hover {
+  transform: translateY(-3px);
+  border-color: var(--card-accent);
+  background: var(--color-surface-hover);
+}
+
+.card-nav-hint {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 1rem;
+  font-size: 0.7rem;
+  color: var(--card-accent);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  letter-spacing: 0.05em;
+}
+
+.summary-card--link:hover .card-nav-hint {
+  opacity: 0.75;
 }
 
 /* =====================
@@ -807,6 +837,7 @@ select {
   font-size: 1.45rem;
   min-width: 160px;
   text-align: center;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.65);
 }
 
 .month-selector .btn-icon {
@@ -814,6 +845,7 @@ select {
   height: 36px;
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-sm);
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.5));
 }
 
 /* =====================
@@ -980,24 +1012,44 @@ select {
   }
 
   .nav {
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-areas:
+      "links links"
+      "brand wallpaper";
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 0.6rem 0;
     padding-bottom: 1.25rem;
     margin-bottom: 1.75rem;
+    align-items: center;
   }
 
   .nav-brand {
-    width: 100%;
-    margin-bottom: 0.25rem;
+    grid-area: brand;
+    margin-right: 0;
   }
 
   .nav-links {
-    gap: 0.15rem;
+    grid-area: links;
+    gap: 0.2rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px; /* room for focus rings */
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-right {
+    grid-area: wallpaper;
   }
 
   .nav a.nav-link {
-    font-size: 0.75rem;
-    padding: 0.35rem 0.7rem;
+    font-size: 0.72rem;
+    padding: 0.3rem 0.65rem;
+    white-space: nowrap;
   }
 
   .filters-bar {

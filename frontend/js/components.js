@@ -2,12 +2,15 @@
    Shared Components
    ===================== */
 
-function renderSummaryCard(label, value, accentColor, sub) {
+function renderSummaryCard(label, value, accentColor, sub, filterType = null) {
+  const extra = filterType ? `data-tx-filter="${filterType}"` : '';
+  const cls = filterType ? 'summary-card summary-card--link' : 'summary-card';
   return `
-    <div class="summary-card" style="--card-accent: ${accentColor}">
+    <div class="${cls}" style="--card-accent: ${accentColor}" ${extra}>
       <div class="card-label">${label}</div>
       <div class="card-value">${value}</div>
       ${sub ? `<div class="card-sub">${sub}</div>` : ''}
+      ${filterType ? `<div class="card-nav-hint">ver →</div>` : ''}
     </div>
   `;
 }

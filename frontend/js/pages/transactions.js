@@ -15,17 +15,21 @@ function initTransactions() {
   const { year, month } = getCurrentMonth();
   txState.year = year;
   txState.month = month;
-  txState.filterType = 'all';
+  txState.filterType = window.__txPreFilter || 'all';
   txState.filterCategory = 'all';
+  window.__txPreFilter = null;
 
   document.getElementById('add-transaction-btn')
     ?.addEventListener('click', () => openTransactionModal());
 
-  document.getElementById('filter-type')
-    ?.addEventListener('change', (e) => {
-      txState.filterType = e.target.value;
-      renderTransactions();
-    });
+  const filterTypeEl = document.getElementById('filter-type');
+  filterTypeEl?.addEventListener('change', (e) => {
+    txState.filterType = e.target.value;
+    renderTransactions();
+  });
+  if (filterTypeEl && txState.filterType !== 'all') {
+    filterTypeEl.value = txState.filterType;
+  }
 
   document.getElementById('filter-category')
     ?.addEventListener('change', (e) => {
