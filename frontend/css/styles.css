@@ -73,6 +73,7 @@ body {
   min-height: 100vh;
   line-height: 1.6;
   overflow-x: hidden;
+  overscroll-behavior: none;
 }
 
 /* =====================
@@ -130,13 +131,30 @@ body {
   border-bottom: 1px solid var(--color-border);
 }
 
+.nav-identity {
+  display: flex;
+  flex-direction: column;
+  margin-right: auto;
+  gap: 0.05rem;
+}
+
 .nav-brand {
   font-family: var(--font-display);
-  font-size: 1.65rem;
+  font-size: 1.45rem;
   color: var(--color-accent);
   text-decoration: none;
-  margin-right: auto;
   letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+#bg-debug {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.05em;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
 }
 
 .nav-links {
@@ -170,24 +188,26 @@ body {
 
 .btn-wallpaper {
   margin-left: 0.5rem;
-  width: 32px;
-  height: 28px;
-  padding: 0;
+  padding: 0.28rem 0.65rem;
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.05);
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s, color 0.2s;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  color: var(--color-text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  white-space: nowrap;
   line-height: 1;
 }
 
 .btn-wallpaper:hover {
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.12);
   border-color: var(--color-accent);
   color: var(--color-accent);
 }
@@ -858,19 +878,24 @@ select {
 .month-selector .btn-icon {
   width: 36px;
   height: 36px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-sm);
-  color: var(--color-text);
-  background: rgba(0, 0, 0, 0.28);
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.05rem;
+  text-shadow:
+    0 0 6px rgba(0, 0, 0, 1),
+    0 0 14px rgba(0, 0, 0, 0.9),
+    0 1px 3px rgba(0, 0, 0, 1);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+  transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
 .month-selector .btn-icon:hover {
-  background: rgba(0, 0, 0, 0.45);
-  border-color: rgba(255, 255, 255, 0.28);
   color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* =====================
@@ -1061,11 +1086,14 @@ select {
     display: none;
   }
 
-  /* Row 2: brand grows left, wallpaper sits right */
-  .nav-brand {
+  /* Row 2: identity grows left, wallpaper sits right */
+  .nav-identity {
     flex: 1;
-    font-size: 1.45rem;
     margin-right: 0;
+  }
+
+  .nav-brand {
+    font-size: 1.3rem;
   }
 
   .nav-right {
@@ -1252,23 +1280,6 @@ select {
 @keyframes shimmer {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
-}
-
-/* =====================
-   Background debug label
-   ===================== */
-
-#bg-debug {
-  position: fixed;
-  bottom: 0.6rem;
-  left: 0.8rem;
-  z-index: 300;
-  font-family: var(--font-body);
-  font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.22);
-  letter-spacing: 0.04em;
-  pointer-events: none;
-  user-select: none;
 }
 
 /* =====================
