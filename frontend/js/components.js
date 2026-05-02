@@ -7,12 +7,62 @@ function renderSummaryCard(label, value, accentColor, sub, filterType = null) {
   const cls = filterType ? 'summary-card summary-card--link' : 'summary-card';
   return `
     <div class="${cls}" style="--card-accent: ${accentColor}" ${extra}>
+      ${filterType ? `<span class="card-arrow" aria-hidden="true">↗</span>` : ''}
       <div class="card-label">${label}</div>
       <div class="card-value">${value}</div>
       ${sub ? `<div class="card-sub">${sub}</div>` : ''}
-      ${filterType ? `<div class="card-nav-hint">ver →</div>` : ''}
     </div>
   `;
+}
+
+/* =====================
+   Color Picker
+   ===================== */
+
+const COLOR_PALETTE = [
+  // Reds & pinks
+  '#f87171', '#fb7185', '#f472b6', '#e879f9',
+  // Oranges & yellows
+  '#fb923c', '#fbbf24', '#facc15', '#a3e635',
+  // Greens & teals
+  '#4ade80', '#34d399', '#2dd4bf', '#22d3ee',
+  // Blues & purples
+  '#38bdf8', '#60a5fa', '#818cf8', '#a78bfa',
+  '#c084fc', '#e0aaff',
+  // Warm neutrals & earth
+  '#94a3b8', '#a8a29e', '#d4a373', '#c4b5a5',
+  '#b8a9c9', '#8fbc8f',
+];
+
+function renderColorPicker(id, currentValue) {
+  const value = currentValue || COLOR_PALETTE[14]; // default: indigo
+  return `
+    <div class="color-picker" id="${id}" role="group" aria-label="Color palette">
+      ${COLOR_PALETTE.map(color => `
+        <button type="button" class="color-swatch${color === value ? ' selected' : ''}"
+                data-color="${color}" style="background:${color}"
+                aria-label="${color}" title="${color}"></button>
+      `).join('')}
+    </div>
+    <input type="hidden" id="${id}-value" value="${value}">
+  `;
+}
+
+function getColorPickerValue(id) {
+  return document.getElementById(`${id}-value`)?.value || COLOR_PALETTE[14];
+}
+
+function initColorPicker(id) {
+  const container = document.getElementById(id);
+  if (!container) return;
+  const input = document.getElementById(`${id}-value`);
+  container.addEventListener('click', (e) => {
+    const swatch = e.target.closest('.color-swatch');
+    if (!swatch) return;
+    container.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+    swatch.classList.add('selected');
+    if (input) input.value = swatch.dataset.color;
+  });
 }
 
 function renderMonthSelector(year, month, onChange) {

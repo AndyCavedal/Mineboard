@@ -81,7 +81,6 @@ function _renderCategoryList(listEl, categories) {
 function openCategoryModal(existing) {
   const isEdit = !!existing;
   const title = isEdit ? 'Edit Category' : 'New Category';
-  const defaultColor = '#818cf8';
 
   const bodyHTML = `
     <div class="form-row">
@@ -89,14 +88,14 @@ function openCategoryModal(existing) {
       <input type="text" id="cat-name" placeholder="e.g. Food, Transport..." value="${existing?.name || ''}" />
     </div>
     <div class="form-row">
-      <label for="cat-color">Color</label>
-      <input type="color" id="cat-color" value="${existing?.color || defaultColor}" />
+      <label>Color</label>
+      ${renderColorPicker('cat-color-picker', existing?.color)}
     </div>
   `;
 
-  openModal(title, bodyHTML, async (close) => {
+  const { modal } = openModal(title, bodyHTML, async (close) => {
     const name = document.getElementById('cat-name').value.trim();
-    const color = document.getElementById('cat-color').value;
+    const color = getColorPickerValue('cat-color-picker');
 
     if (!name) {
       showToast('Name is required', 'error');
@@ -117,4 +116,6 @@ function openCategoryModal(existing) {
       showToast('Failed to save', 'error');
     }
   });
+
+  initColorPicker('cat-color-picker');
 }

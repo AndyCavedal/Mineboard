@@ -127,6 +127,8 @@ function renderExpenseChart(transactions, categories) {
   const data = entries.map(([, v]) => v);
   const colors = entries.map(([id]) => catMap[id]?.color || '#5c6478');
 
+  const isMobile = window.innerWidth < 640;
+
   dashboardChart = new Chart(canvas, {
     type: 'doughnut',
     data: {
@@ -141,17 +143,18 @@ function renderExpenseChart(transactions, categories) {
     },
     options: {
       responsive: true,
-      maintainAspectRatio: true,
+      maintainAspectRatio: !isMobile,
       cutout: '62%',
       plugins: {
         legend: {
-          position: 'right',
+          position: isMobile ? 'bottom' : 'right',
           labels: {
             color: '#9ba3b5',
-            font: { family: "'Space Mono'", size: 12 },
-            padding: 14,
+            font: { family: "'Space Mono'", size: isMobile ? 11 : 12 },
+            padding: isMobile ? 10 : 14,
             usePointStyle: true,
             pointStyleWidth: 10,
+            boxWidth: isMobile ? 10 : 14,
           },
         },
         tooltip: {
