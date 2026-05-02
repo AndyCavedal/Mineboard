@@ -6,6 +6,7 @@ const ROUTES = {
   '/dashboard':    { html: 'pages/dashboard.html',    init: initDashboard },
   '/transactions': { html: 'pages/transactions.html',  init: initTransactions },
   '/categories':   { html: 'pages/categories.html',    init: initCategories },
+  '/pombero':      { html: 'pages/pombero.html',       init: () => {} },
 };
 
 const fragmentCache = new Map();
@@ -14,9 +15,23 @@ const navLinks = document.querySelectorAll('.nav-link');
 const appShell = document.querySelector('.app-shell');
 const loginScreen = document.getElementById('login-screen');
 
+function render404(path) {
+  navLinks.forEach(link => link.classList.remove('active'));
+  pageEl.style.animation = 'none';
+  pageEl.offsetHeight;
+  pageEl.style.animation = '';
+  pageEl.innerHTML = `
+    <div class="page-404">
+      <div class="p404-code">404</div>
+      <p class="p404-msg">Ruta no encontrada: <code>${path}</code></p>
+      <a href="#/dashboard" class="btn btn-ghost btn-sm">← volver al inicio</a>
+    </div>
+  `;
+}
+
 async function navigate(path) {
   const route = ROUTES[path];
-  if (!route) return navigate('/dashboard');
+  if (!route) return render404(path);
 
   navLinks.forEach(link => {
     link.classList.toggle('active', link.dataset.route === path);
@@ -65,10 +80,6 @@ document.getElementById('btn-signin')?.addEventListener('click', async () => {
     btn.textContent = 'continuar con google';
     showToast('Error al iniciar sesión', 'error');
   }
-});
-
-document.getElementById('btn-signout')?.addEventListener('click', () => {
-  signOut();
 });
 
 window.addEventListener('authStateChanged', async ({ detail: { user } }) => {

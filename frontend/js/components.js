@@ -48,6 +48,47 @@ function renderMonthSelector(year, month, onChange) {
   return container;
 }
 
+function renderSummaryCardSkeleton() {
+  return `
+    <div class="summary-card">
+      <div class="skeleton" style="width:45%; height:0.7em; margin-bottom:0.8rem;"></div>
+      <div class="skeleton" style="width:75%; height:1.6em; margin-bottom:0.6rem;"></div>
+      <div class="skeleton" style="width:55%; height:0.65em;"></div>
+    </div>
+  `;
+}
+
+function renderTableSkeleton(rows = 5) {
+  const row = `
+    <tr>
+      <td><div class="skeleton" style="width:72%; height:0.85em;"></div></td>
+      <td><div class="skeleton" style="width:88%; height:0.85em;"></div></td>
+      <td><div class="skeleton" style="width:60%; height:0.85em;"></div></td>
+      <td><div class="skeleton" style="width:50%; height:0.85em;"></div></td>
+      <td></td>
+    </tr>`;
+  return `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th></th>
+          </tr>
+        </thead>
+        <tbody>${Array(rows).fill(row).join('')}</tbody>
+      </table>
+    </div>`;
+}
+
+function renderListSkeleton(items = 4) {
+  const item = `
+    <div class="category-item">
+      <div class="skeleton" style="width:18px; height:18px; border-radius:50%; flex-shrink:0;"></div>
+      <div class="skeleton" style="width:45%; height:0.85em;"></div>
+    </div>`;
+  return Array(items).fill(item).join('');
+}
+
 function renderEmptyState(message, icon = '○') {
   return `
     <div class="empty-state">

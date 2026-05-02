@@ -168,63 +168,26 @@ body {
 
 .btn-wallpaper {
   margin-left: 0.5rem;
-  width: 30px;
-  height: 22px;
+  width: 32px;
+  height: 28px;
   padding: 0;
-  border: 1.5px solid var(--color-text-muted);
-  border-radius: 4px;
-  background: transparent;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.07);
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.2s;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.btn-wallpaper::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 55%;
-  background: linear-gradient(
-    135deg,
-    var(--color-text-muted) 25%,
-    transparent 25%,
-    transparent 50%,
-    var(--color-text-muted) 50%,
-    var(--color-text-muted) 65%,
-    transparent 65%
-  );
-  background-size: 8px 8px;
-  opacity: 0.35;
-}
-
-.btn-wallpaper::after {
-  content: '';
-  position: absolute;
-  top: 3px;
-  right: 4px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--color-text-muted);
-  opacity: 0.5;
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  line-height: 1;
 }
 
 .btn-wallpaper:hover {
-  border-color: var(--color-text-secondary);
-}
-
-.btn-wallpaper:hover::before {
-  opacity: 0.5;
-}
-
-.btn-wallpaper:hover::after {
-  opacity: 0.7;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 /* =====================
@@ -1186,7 +1149,7 @@ select {
 }
 
 /* =====================
-   Nav right / signout
+   Nav right
    ===================== */
 
 .nav-right {
@@ -1195,23 +1158,113 @@ select {
   gap: 0.35rem;
 }
 
-.btn-signout {
-  width: 26px;
-  height: 26px;
-  padding: 0;
-  font-size: 0.75rem;
-  border: 1px solid var(--color-border-light);
+/* =====================
+   Skeleton loading
+   ===================== */
+
+.skeleton {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    var(--color-accent-dim) 25%,
+    rgba(255, 255, 255, 0.04) 50%,
+    var(--color-accent-dim) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
   border-radius: 4px;
-  background: transparent;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.btn-signout:hover {
-  border-color: var(--color-expense);
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* =====================
+   Background debug label
+   ===================== */
+
+#bg-debug {
+  position: fixed;
+  bottom: 0.6rem;
+  left: 0.8rem;
+  z-index: 300;
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.22);
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* =====================
+   Pombero (WIP page)
+   ===================== */
+
+.pombero-wip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: 1rem;
+  text-align: center;
+}
+
+.wip-icon {
+  font-size: 4rem;
+  animation: wobble 2.4s ease-in-out infinite;
+}
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(-6deg) scale(1); }
+  50%       { transform: rotate(6deg) scale(1.08); }
+}
+
+.wip-title {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  color: var(--color-text);
+  letter-spacing: 0.02em;
+}
+
+.wip-sub {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* =====================
+   404 page
+   ===================== */
+
+.page-404 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: 1rem;
+  text-align: center;
+}
+
+.p404-code {
+  font-family: var(--font-display);
+  font-size: 7rem;
+  line-height: 1;
   color: var(--color-expense);
+  opacity: 0.6;
+  letter-spacing: 0.04em;
+}
+
+.p404-msg {
+  font-size: 0.88rem;
+  color: var(--color-text-secondary);
+}
+
+.p404-msg code {
+  font-family: var(--font-body);
+  color: var(--color-accent);
+  background: var(--color-accent-dim);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
 }

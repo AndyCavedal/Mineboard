@@ -13,6 +13,17 @@ const BACKGROUNDS = [
   'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=80',
 ];
 
+const BACKGROUND_NAMES = [
+  'summit-fog',
+  'tropical-shore',
+  'mountain-forest',
+  'golden-valley',
+  'ancient-forest',
+  'serene-lake',
+  'ocean-waves',
+  'rocky-peaks',
+];
+
 function pickBackgroundImage() {
   const idx = new Date().getDate() % BACKGROUNDS.length;
   return BACKGROUNDS[idx];
@@ -178,6 +189,12 @@ async function setBackground(url) {
   const colors = await colorsPromise;
   applyExtractedColors(colors);
   window.__extractedColors = colors;
+
+  // Debug label — shows background name in corner
+  const debugEl = document.getElementById('bg-debug');
+  if (debugEl) {
+    debugEl.textContent = `[${currentBgIndex}] ${BACKGROUND_NAMES[currentBgIndex] || ''}`;
+  }
 }
 
 function initBackground() {

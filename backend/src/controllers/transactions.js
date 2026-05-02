@@ -17,7 +17,7 @@ const getAll = async (req, res) => {
     const snap = await query.orderBy('date', 'desc').get();
     const transactions = snap.docs.map((d) => {
       const data = d.data();
-      return { id: d.id, ...data, date: data.date?.toDate().toISOString() ?? null };
+      return { id: d.id, ...data, date: data.date?.toDate().toISOString().slice(0, 10) ?? null };
     });
     res.json(transactions);
   } catch (e) {

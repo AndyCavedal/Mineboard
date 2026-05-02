@@ -47,20 +47,37 @@ async function loadTransactions(year, month) {
     selectorEl.appendChild(renderMonthSelector(year, month, loadTransactions));
   }
 
+  // Show cached data immediately
+  const cachedTx = api.getCached('/transactions');
+  const cachedCats = api.getCached('/categories');
+
+  if (cachedTx && cachedCats) {
+    _applyTransactionData(cachedTx, cachedCats);
+  } else {
+    const contentEl = document.getElementById('transactions-content');
+    if (contentEl) contentEl.innerHTML = renderTableSkeleton();
+  }
+
+  // Always fetch fresh
   try {
-    [txState.transactions, txState.categories] = await Promise.all([
+    const [transactions, categories] = await Promise.all([
       api.get('/transactions'),
       api.get('/categories'),
     ]);
+    _applyTransactionData(transactions, categories);
   } catch (e) {
-    txState.transactions = [];
-    txState.categories = [];
+    if (!cachedTx) {
+      txState.transactions = [];
+      txState.categories = [];
+      renderTransactions();
+    }
   }
+}
 
-  if (!Array.isArray(txState.transactions)) txState.transactions = [];
-  if (!Array.isArray(txState.categories)) txState.categories = [];
+function _applyTransactionData(transactions, categories) {
+  txState.transactions = Array.isArray(transactions) ? transactions : [];
+  txState.categories = Array.isArray(categories) ? categories : [];
 
-  // Populate category filter
   const catSelect = document.getElementById('filter-category');
   if (catSelect) {
     const current = catSelect.value;
@@ -78,7 +95,8 @@ function getFilteredTransactions() {
   const { start, end } = getMonthRange(txState.year, txState.month);
 
   return txState.transactions.filter(t => {
-    if (t.date < start || t.date > end) return false;
+    const d = typeof t.date === 'string' ? t.date.slice(0, 10) : '';
+    if (d < start || d > end) return false;
     if (txState.filterType !== 'all' && t.type !== txState.filterType) return false;
     if (txState.filterCategory !== 'all' && t.category !== txState.filterCategory) return false;
     return true;
@@ -186,7 +204,7 @@ function openTransactionModal(existing) {
       </div>
       <div>
         <label for="tx-date">Date</label>
-        <input type="date" id="tx-date" value="${existing?.date || todayString()}" />
+        <input type="date" id="tx-date" value="${existing?.date ? existing.date.slice(0, 10) : todayString()}" />
       </div>
     </div>
     <div class="form-row">

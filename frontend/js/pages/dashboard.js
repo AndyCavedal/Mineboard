@@ -17,24 +17,42 @@ async function loadDashboard(year, month) {
     selectorEl.appendChild(renderMonthSelector(year, month, loadDashboard));
   }
 
-  // Fetch data
-  let transactions = [];
-  let categories = [];
+  // Show cached data immediately (stale-while-revalidate)
+  const cachedTx = api.getCached('/transactions');
+  const cachedCats = api.getCached('/categories');
+
+  if (cachedTx && cachedCats) {
+    _renderDashboard(year, month, cachedTx, cachedCats);
+  } else {
+    // No cache yet — show skeletons
+    const cardsEl = document.getElementById('summary-cards');
+    if (cardsEl) {
+      cardsEl.innerHTML = Array(3).fill(renderSummaryCardSkeleton()).join('');
+    }
+  }
+
+  // Always fetch fresh
   try {
-    [transactions, categories] = await Promise.all([
+    const [transactions, categories] = await Promise.all([
       api.get('/transactions'),
       api.get('/categories'),
     ]);
+    _renderDashboard(year, month, transactions, categories);
   } catch (e) {
-    // empty arrays as fallback
+    // Keep cached render if available; otherwise leave skeletons
   }
+}
 
+function _renderDashboard(year, month, transactions, categories) {
   if (!Array.isArray(transactions)) transactions = [];
   if (!Array.isArray(categories)) categories = [];
 
   // Filter by month
   const { start, end } = getMonthRange(year, month);
-  const monthly = transactions.filter(t => t.date >= start && t.date <= end);
+  const monthly = transactions.filter(t => {
+    const d = typeof t.date === 'string' ? t.date.slice(0, 10) : '';
+    return d >= start && d <= end;
+  });
 
   // Calculate totals
   const income = monthly
@@ -48,11 +66,10 @@ async function loadDashboard(year, month) {
   // Summary cards
   const cardsEl = document.getElementById('summary-cards');
   if (cardsEl) {
-    const txCount = monthly.length;
     cardsEl.innerHTML =
       renderSummaryCard('Income', formatCurrency(income), 'var(--color-income)', `${monthly.filter(t => t.type === 'income').length} transactions`) +
       renderSummaryCard('Expenses', formatCurrency(expenses), 'var(--color-expense)', `${monthly.filter(t => t.type === 'expense').length} transactions`) +
-      renderSummaryCard('Balance', formatCurrency(balance), balance >= 0 ? 'var(--color-income)' : 'var(--color-expense)', `${txCount} total`);
+      renderSummaryCard('Balance', formatCurrency(balance), balance >= 0 ? 'var(--color-income)' : 'var(--color-expense)', `${monthly.length} total`);
   }
 
   // Chart

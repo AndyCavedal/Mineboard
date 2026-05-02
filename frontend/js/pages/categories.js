@@ -13,14 +13,24 @@ async function loadCategories() {
   const listEl = document.getElementById('category-list');
   if (!listEl) return;
 
-  let categories = [];
-  try {
-    categories = await api.get('/categories');
-  } catch (e) {
-    // fallback
+  // Show cached data immediately
+  const cached = api.getCached('/categories');
+  if (cached) {
+    _renderCategoryList(listEl, cached);
+  } else {
+    listEl.innerHTML = renderListSkeleton();
   }
-  if (!Array.isArray(categories)) categories = [];
 
+  // Always fetch fresh
+  try {
+    const categories = await api.get('/categories');
+    _renderCategoryList(listEl, Array.isArray(categories) ? categories : []);
+  } catch (e) {
+    if (!cached) listEl.innerHTML = renderEmptyState('Failed to load categories');
+  }
+}
+
+function _renderCategoryList(listEl, categories) {
   if (categories.length === 0) {
     listEl.innerHTML = renderEmptyState('No categories yet. Create one to get started.');
     return;
