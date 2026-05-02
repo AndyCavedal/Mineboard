@@ -21,9 +21,10 @@ async function loadCategories() {
     listEl.innerHTML = renderListSkeleton();
   }
 
-  // Always fetch fresh
+  // Always fetch fresh, but skip re-render if data hasn't changed
   try {
     const categories = await api.get('/categories');
+    if (cached && JSON.stringify(categories) === JSON.stringify(cached)) return;
     _renderCategoryList(listEl, Array.isArray(categories) ? categories : []);
   } catch (e) {
     if (!cached) listEl.innerHTML = renderEmptyState('Failed to load categories');

@@ -62,12 +62,17 @@ async function loadTransactions(year, month) {
     if (contentEl) contentEl.innerHTML = renderTableSkeleton();
   }
 
-  // Always fetch fresh
+  // Always fetch fresh, but skip re-render if data hasn't changed
   try {
     const [transactions, categories] = await Promise.all([
       api.get('/transactions'),
       api.get('/categories'),
     ]);
+    if (
+      cachedTx && cachedCats &&
+      JSON.stringify(transactions) === JSON.stringify(cachedTx) &&
+      JSON.stringify(categories) === JSON.stringify(cachedCats)
+    ) return;
     _applyTransactionData(transactions, categories);
   } catch (e) {
     if (!cachedTx) {
