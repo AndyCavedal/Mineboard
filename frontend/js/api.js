@@ -10,7 +10,10 @@ async function authHeaders(includeContentType = true) {
 
 const api = {
   get: async (path) => {
-    const res = await fetch(`${API_BASE}${path}`, { headers: await authHeaders(false) });
+    const res = await fetch(`${API_BASE}${path}`, {
+      headers: await authHeaders(false),
+      cache: 'no-cache',
+    });
     return res.json();
   },
   post: async (path, body) => {
