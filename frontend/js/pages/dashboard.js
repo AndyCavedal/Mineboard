@@ -88,6 +88,9 @@ function _renderDashboard(year, month, transactions, categories) {
   // Chart
   renderExpenseChart(monthly, categories);
 
+  // Daily budget
+  renderDailyBudget(balance, year, month);
+
   // Recent transactions
   renderRecentTransactions(monthly, categories);
 }
@@ -179,6 +182,53 @@ function renderExpenseChart(transactions, categories) {
       },
     },
   });
+}
+
+function renderDailyBudget(balance, year, month) {
+  const el = document.getElementById('daily-budget');
+  if (!el) return;
+
+  const now = new Date();
+  const curYear = now.getFullYear();
+  const curMonth = now.getMonth() + 1;
+
+  if (year !== curYear || month !== curMonth) {
+    el.innerHTML = '';
+    return;
+  }
+
+  const today = now.getDate();
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const remaining = daysInMonth - today + 1;
+
+  if (balance <= 0 || remaining <= 0) {
+    el.innerHTML = `
+      <div class="daily-budget">
+        <span class="daily-budget__tag">// límite diario</span>
+        <div class="daily-budget__formula">
+          <span class="daily-budget__balance daily-budget__balance--zero">sin balance</span>
+          <span class="daily-budget__cursor"></span>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const daily = balance / remaining;
+  const daysLabel = remaining === 1 ? 'día' : 'días';
+
+  el.innerHTML = `
+    <div class="daily-budget">
+      <span class="daily-budget__tag">// límite diario</span>
+      <div class="daily-budget__formula">
+        <span class="daily-budget__balance">${formatCurrency(balance)}</span>
+        <span class="daily-budget__op">÷ ${remaining} ${daysLabel}</span>
+        <span class="daily-budget__eq">=</span>
+        <span class="daily-budget__result">${formatCurrency(daily)}<span class="daily-budget__unit">/día</span></span>
+        <span class="daily-budget__cursor"></span>
+      </div>
+    </div>
+  `;
 }
 
 function renderRecentTransactions(transactions, categories) {
