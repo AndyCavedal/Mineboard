@@ -190,7 +190,7 @@ function renderDailyBudget(balance, year, month) {
 
   const now = new Date();
   const curYear = now.getFullYear();
-  const curMonth = now.getMonth() + 1;
+  const curMonth = now.getMonth(); // 0-indexed, matches getCurrentMonth()
 
   if (year !== curYear || month !== curMonth) {
     el.innerHTML = '';
@@ -198,7 +198,7 @@ function renderDailyBudget(balance, year, month) {
   }
 
   const today = now.getDate();
-  const daysInMonth = new Date(year, month, 0).getDate();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
   const remaining = daysInMonth - today + 1;
 
   if (balance <= 0 || remaining <= 0) {
