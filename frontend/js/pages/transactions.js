@@ -152,6 +152,7 @@ function renderTransactions() {
                 </td>
                 <td>
                   <div class="actions-cell">
+                    ${t.pending ? `<button class="btn-icon btn-confirm" data-confirm-tx="${t.id}" aria-label="Mark as paid">&#10003;</button>` : ''}
                     <button class="btn-icon" data-edit-tx="${t.id}" aria-label="Edit">&#9998;</button>
                     <button class="btn-icon" data-delete-tx="${t.id}" aria-label="Delete">&#10005;</button>
                   </div>
@@ -189,6 +190,28 @@ function renderTransactions() {
           }
         }
       );
+    });
+  });
+
+  // Wire mark-as-paid
+  contentEl.querySelectorAll('[data-confirm-tx]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const t = txState.transactions.find(tx => tx.id === btn.dataset.confirmTx);
+      if (!t) return;
+      try {
+        await api.put(`/transactions/${t.id}`, {
+          description: t.description,
+          amount: t.amount,
+          date: t.date,
+          category: t.category,
+          type: t.type,
+          pending: false,
+        });
+        showToast('Marked as paid');
+        loadTransactions(txState.year, txState.month);
+      } catch (e) {
+        showToast('Failed to update', 'error');
+      }
     });
   });
 }
@@ -232,6 +255,16 @@ function openTransactionModal(existing) {
         <label for="tx-type-income">Income</label>
       </div>
     </div>
+    <div class="form-row">
+      <label class="pending-switch" for="tx-pending">
+        <input type="checkbox" id="tx-pending" ${existing?.pending ? 'checked' : ''} />
+        <span class="pending-switch-track" aria-hidden="true">
+          <span class="pending-switch-thumb"></span>
+        </span>
+        <span class="pending-switch-label">Future / Pending</span>
+        <span class="pending-switch-hint">Mark as not yet paid</span>
+      </label>
+    </div>
   `;
 
   openModal(title, bodyHTML, async (close) => {
@@ -240,6 +273,7 @@ function openTransactionModal(existing) {
     const date = document.getElementById('tx-date').value;
     const category = document.getElementById('tx-category').value || null;
     const type = document.querySelector('input[name="tx-type"]:checked')?.value || 'expense';
+    const pending = document.getElementById('tx-pending')?.checked || false;
 
     if (!amount || amount <= 0) {
       showToast('Enter a valid amount', 'error');
@@ -250,7 +284,7 @@ function openTransactionModal(existing) {
       return;
     }
 
-    const body = { description, amount, date, category, type };
+    const body = { description, amount, date, category, type, pending };
 
     try {
       if (isEdit) {

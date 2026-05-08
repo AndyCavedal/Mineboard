@@ -28,13 +28,14 @@ const getAll = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const { amount, type, category, description, date } = req.body;
+    const { amount, type, category, description, date, pending } = req.body;
     const data = {
       amount: Number(amount),
       type,
       category,
       description,
       date: Timestamp.fromDate(new Date(date)),
+      pending: Boolean(pending),
     };
     const ref = await col().add(data);
     res.status(201).json({ id: ref.id, ...data, date });
@@ -46,13 +47,14 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const { amount, type, category, description, date } = req.body;
+    const { amount, type, category, description, date, pending } = req.body;
     const data = {
       amount: Number(amount),
       type,
       category,
       description,
       date: Timestamp.fromDate(new Date(date)),
+      pending: Boolean(pending),
     };
     await col().doc(req.params.id).update(data);
     res.json({ id: req.params.id, ...data, date });
